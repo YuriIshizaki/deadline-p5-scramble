@@ -1,5 +1,9 @@
 # deadline-p5-scramble
 
+## 概要
+初めてのElectronプロジェクト。
+ペルソナ5スクランブル風タスク表示デスクトップアプリケーション(macOSのみ確認)。
+
 ## Project setup
 ```
 npm install
