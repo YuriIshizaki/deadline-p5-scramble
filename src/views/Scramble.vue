@@ -118,6 +118,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 .home {
   font-family: "ほのか丸ゴシック";
+  overflow: hidden;
   padding: 10px;
   text-align: right;
 

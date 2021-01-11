@@ -8,13 +8,13 @@ import { mainEventSetup } from "@/plugins/main-setup";
 import path from "path";
 import log from "electron-log";
 
-mainEventSetup();
-
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 process.on("uncaughtException", function(err) {
   log.error(err.message);
   log.error(err.stack);
 });
+
+mainEventSetup();
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
@@ -25,7 +25,7 @@ protocol.registerSchemesAsPrivileged([
 
 let scrambleWindow: BrowserWindow;
 
-async function createWindow() {
+async function createScrambleWindow() {
   // TODO 複数window対応
   scrambleWindow = new BrowserWindow({
     useContentSize: false,
@@ -120,7 +120,7 @@ app.on("window-all-closed", () => {
 });
 
 app.on("activate", () => {
-  if (BrowserWindow.getAllWindows().length === 0) createWindow();
+  if (BrowserWindow.getAllWindows().length === 0) createScrambleWindow();
 });
 
 app.on("ready", async () => {
@@ -133,7 +133,7 @@ app.on("ready", async () => {
     }
   }
   Menu.setApplicationMenu(template);
-  createWindow();
+  createScrambleWindow();
 });
 
 if (isDevelopment) {
