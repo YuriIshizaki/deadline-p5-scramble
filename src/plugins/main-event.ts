@@ -10,7 +10,7 @@ import { WindowNames } from "@/constants/window-name";
 /**
  * メインプロセスのイベントリスナー登録
  */
-export const mainEventSetup = () => {
+export const setupMainEvent = () => {
   ipcMain.on(
     "Main:WindowManager:Add",
     (event: IpcMainEvent, data: WindowMapInterface) => {
