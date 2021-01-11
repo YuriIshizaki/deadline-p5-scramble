@@ -30,17 +30,6 @@ class WindowManager {
     }
   }
 
-  existPreferenceWindow(): boolean {
-    let result = false;
-    this.allWindows.forEach(openedWindow => {
-      if (openedWindow.name === WindowNames.Preference) {
-        result = true;
-      }
-    });
-
-    return result;
-  }
-
   getWindow(id: number): BrowserWindow | null {
     let result = null;
 
@@ -63,16 +52,6 @@ class WindowManager {
     });
 
     return result;
-  }
-
-  resizeWindow(id: number, size: WindowSizeInterface): void {
-    const windows = BrowserWindow.getAllWindows();
-    for (let i = 0; i <= windows.length; i++) {
-      if (windows[i].id === id) {
-        windows[i].setSize(size.width, size.height, false);
-        break;
-      }
-    }
   }
 
   get allWindows() {

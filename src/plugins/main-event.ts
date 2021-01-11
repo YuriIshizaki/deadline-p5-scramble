@@ -24,13 +24,11 @@ export const setupMainEvent = () => {
 
   // eslint-disable-next-line
   ipcMain.on("Main:PreferenceWindow:Show", (event: IpcMainEvent) => {
-    if (windowManager.existPreferenceWindow()) {
-      const preferenceWindow = windowManager.getWindow(
-        windowManager.getWindowIdByName(WindowNames.Preference)
-      );
-      if (preferenceWindow) {
-        preferenceWindow.focus();
-      }
+    const preferenceWindow = windowManager.getWindow(
+      windowManager.getWindowIdByName(WindowNames.Preference)
+    );
+    if (preferenceWindow) {
+      preferenceWindow.focus();
     } else {
       createPreferenceWindow();
     }
@@ -63,7 +61,10 @@ export const setupMainEvent = () => {
   ipcMain.on(
     "Main:WindowManager:Resize",
     (event: IpcMainEvent, id: number, size: WindowSizeInterface) => {
-      windowManager.resizeWindow(id, size);
+      const targetWindow = windowManager.getWindow(id);
+      if (targetWindow) {
+        targetWindow.setSize(size.width, size.height);
+      }
     }
   );
 };
