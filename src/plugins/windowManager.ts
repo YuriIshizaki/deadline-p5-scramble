@@ -1,5 +1,4 @@
 import { BrowserWindow } from "electron";
-import { WindowNames } from "@/constants/window-name";
 
 export interface WindowMapInterface {
   name: string;
