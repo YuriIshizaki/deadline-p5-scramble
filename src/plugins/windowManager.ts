@@ -1,5 +1,4 @@
 import { BrowserWindow } from "electron";
-import { WindowNames } from "@/constants/window-name";
 
 export interface WindowMapInterface {
   name: string;
@@ -22,23 +21,12 @@ class WindowManager {
   }
 
   removeWindow(id: number): void {
-    for (let i = 0; i <= this.allWindows.length; i++) {
+    for (let i = 0; i < this.allWindows.length; i++) {
       if (this.allWindows[i].id === id) {
         this.allWindows.splice(i, 1);
         break;
       }
     }
-  }
-
-  existPreferenceWindow(): boolean {
-    let result = false;
-    this.allWindows.forEach(openedWindow => {
-      if (openedWindow.name === WindowNames.Preference) {
-        result = true;
-      }
-    });
-
-    return result;
   }
 
   getWindow(id: number): BrowserWindow | null {
@@ -63,16 +51,6 @@ class WindowManager {
     });
 
     return result;
-  }
-
-  resizeWindow(id: number, size: WindowSizeInterface): void {
-    const windows = BrowserWindow.getAllWindows();
-    for (let i = 0; i <= windows.length; i++) {
-      if (windows[i].id === id) {
-        windows[i].setSize(size.width, size.height, false);
-        break;
-      }
-    }
   }
 
   get allWindows() {
