@@ -1,15 +1,31 @@
-import { app, BrowserWindow, Menu } from "electron";
+import { app, BrowserWindow, Menu, Rectangle } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import { WindowNames } from "@/constants/window-name";
+import Store from "electron-store";
 import path from "path";
+
+const store = new Store<Rectangle>({
+  name: "setting"
+});
 
 /**
  * Scrambleモードのウィンドウ生成
  * @param {number|string} index
  */
 export const createScrambleWindow = async (index: number | string = 0) => {
+  const bounds: Rectangle = store.get("scrambleWindowBounds", {
+    x: 0,
+    y: 0,
+    width: 800,
+    height: 600
+  });
+
   // TODO 複数window対応
   const scrambleWindow = new BrowserWindow({
+    x: bounds.x,
+    y: bounds.y,
+    width: bounds.width,
+    height: bounds.height,
     useContentSize: false,
     webPreferences: {
       nodeIntegration: false,
@@ -39,6 +55,9 @@ export const createScrambleWindow = async (index: number | string = 0) => {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   scrambleWindow.on("close", (event: Electron.Event) => {
+    const currentBounds = scrambleWindow.getBounds();
+    store.set("scrambleWindowBounds", currentBounds);
+
     scrambleWindow.webContents.send("WindowManager:Remove", scrambleWindow.id);
   });
 
