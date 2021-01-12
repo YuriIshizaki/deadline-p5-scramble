@@ -21,7 +21,7 @@ class WindowManager {
   }
 
   removeWindow(id: number): void {
-    for (let i = 0; i <= this.allWindows.length; i++) {
+    for (let i = 0; i < this.allWindows.length; i++) {
       if (this.allWindows[i].id === id) {
         this.allWindows.splice(i, 1);
         break;
