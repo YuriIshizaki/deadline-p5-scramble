@@ -7,7 +7,7 @@ module.exports = {
         productName: "DeadlineP5-Scramble",
         appId: "com.yuri-ishizaki.deadlinep5scramble",
         mac: {
-          // icon: "src/assets/app.png",
+          icon: "icon/app_icon.png",
           target: [
             {
               target: "dmg",
