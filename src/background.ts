@@ -21,9 +21,6 @@ protocol.registerSchemesAsPrivileged([
   { scheme: "app", privileges: { secure: true, standard: true } }
 ]);
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-let scrambleWindow: BrowserWindow;
-
 app.setAboutPanelOptions({
   applicationName: app.name,
   applicationVersion: app.getVersion(),
@@ -41,9 +38,7 @@ app.on("window-all-closed", () => {
 
 app.on("activate", () => {
   if (BrowserWindow.getAllWindows().length === 0) {
-    createScrambleWindow(1).then(createdWindow => {
-      scrambleWindow = createdWindow;
-    });
+    createScrambleWindow(1);
   }
 });
 
@@ -58,9 +53,7 @@ app.on("ready", async () => {
   }
 
   Menu.setApplicationMenu(defaultAppMenu);
-  createScrambleWindow(1).then(createdWindow => {
-    scrambleWindow = createdWindow;
-  });
+  createScrambleWindow(1);
 });
 
 if (isDevelopment) {
