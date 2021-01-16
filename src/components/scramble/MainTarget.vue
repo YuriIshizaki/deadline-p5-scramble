@@ -1,94 +1,98 @@
 <template>
-  <div class="main_target">
-    <div class="wrap">
-      <span class="r">{{ target }}</span>
-    </div>
-    <div class="wrap">
-      <span class="g">{{ target }}</span>
-    </div>
-    <div class="wrap">
-      <span class="b">{{ target }}</span>
-    </div>
-  </div>
+  <svg
+    :style="{
+      height: height,
+      width: width
+    }"
+    :viewBox="viewBox"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+  >
+    <g stroke-linecap="round" :style="scaleStyle">
+      <path class="main_path" :d="path" />
+      <text
+        ref="textRef"
+        dominant-baseline="middle"
+        :x="width * 0.5"
+        :y="height * 0.5"
+      >
+        {{ target }}
+      </text>
+    </g>
+  </svg>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, ref, computed, onMounted } from "vue";
 
 export default defineComponent({
   name: "MainTarget",
   props: {
-    target: String
+    target: String,
+    width: {
+      type: Number,
+      default: 500
+    },
+    height: {
+      type: Number,
+      default: 60
+    },
+    scale: {
+      type: Number,
+      default: 1.0
+    }
+  },
+  setup(props, context) {
+    const scaleStyle = computed(() => {
+      return {
+        transform: `scale(${props.scale}) translate(5px, 0)`
+      };
+    });
+
+    const viewBox = computed(() => `0, 0, ${props.width}, ${props.height}`);
+    const path = computed(
+      () => `M0, 0
+        L${props.width - 5 - 5}, 3
+        L${props.width - 5}, ${props.height}
+        L0, ${props.height}
+        L-5, ${props.height * 0.25}
+        L0,0 z`
+    );
+
+    const textRef = ref<HTMLElement>();
+
+    onMounted(() => {
+      if (textRef.value) {
+        const textWidth = textRef.value.getBoundingClientRect().width;
+        context.emit("onMountedText", Math.ceil(textWidth));
+      }
+    });
+
+    return {
+      scaleStyle,
+      viewBox,
+      path,
+      textRef
+    };
   }
 });
 </script>
 
 <style lang="scss" scoped>
-.main_target {
-  display: inline-block;
-  position: relative;
-
-  .wrap {
-    animation: scramble-target-animation1 0.8s linear infinite;
-    background-color: rgba(255, 0, 0, 0.3);
-    border: 1px solid transparent;
-    border-radius: 3px;
-    box-shadow: 0px 0px 5px 1px rgba(255, 0, 0, 0.2);
-    display: inline-block;
-    padding: 10px 70px;
-    position: absolute;
-    right: 0;
-
-    $originDelay: 3s;
-    &:first-of-type {
-      animation-delay: $originDelay * 2;
-      margin: 0 0 20px 0;
-      position: static;
-    }
-    &:nth-of-type(2) {
-      animation-delay: $originDelay;
-    }
-    &:nth-of-type(3) {
-      animation-delay: $originDelay * 3;
-    }
-
-    > span {
-      animation: scramble-target-animation2 1s linear infinite;
-      color: white;
-      font-size: 40px;
-      font-weight: bolder;
-      display: inline-block;
-      white-space: nowrap;
-    }
+svg {
+  path {
+    $color: rgba(255, 20, 0, 0.8);
+    fill: $color;
+    stroke: $color;
+    stroke-width: 0.5;
   }
-}
-
-@keyframes scramble-target-animation1 {
-  0%,
-  100% {
-    right: 0;
-    transform: rotate(0);
-  }
-  25% {
-    right: 1.5px;
+  text {
+    fill: white;
+    font-size: 30px;
+    font-weight: bold;
+    text-anchor: middle;
     transform: rotate(-0.5deg);
-  }
-  75% {
-    right: -1.5px;
-    transform: rotate(0.5deg);
-  }
-}
-
-@keyframes scramble-target-animation2 {
-  0%,
-  100% {
-    transform: rotate(0deg);
-  }
-  25% {
-    transform: rotate(0.5deg);
-  }
-  75% {
-    transform: rotate(-0.5deg);
+    transform-origin: 50% 50%;
   }
 }
 </style>

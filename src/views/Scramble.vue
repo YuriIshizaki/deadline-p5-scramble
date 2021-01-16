@@ -1,6 +1,11 @@
 <template>
   <div class="home" ref="rootNode">
-    <main-target :target="setting.mainTarget" ref="mainTargetRef" />
+    <main-target
+      :width="mainTargetSvgWidth"
+      :target="setting.mainTarget"
+      class="main_target"
+      @onMountedText="onMountedMainTargetText"
+    />
     <div class="target_wrap" ref="targetRef">
       <template v-for="(target, index) in setting.targets">
         <target
@@ -84,32 +89,51 @@ export default defineComponent({
     const setting = getTargetSetting(displayMode, index);
 
     const rootNode = ref<HTMLDivElement>();
-    const mainTargetRef = ref();
     const targetRef = ref<HTMLDivElement>();
+
+    const mainTargetWidth = ref<number>(0);
+    const targetWidth = ref<number>(0);
+
+    const _setWindowSize = () => {
+      if (
+        rootNode.value &&
+        mainTargetWidth.value !== 0 &&
+        targetWidth.value !== 0
+      ) {
+        const height = rootNode.value.getBoundingClientRect().height as number;
+        const width = compare(mainTargetWidth.value, targetWidth.value);
+        setWindowSize(
+          Number(index),
+          Math.ceil(height) + 20,
+          Math.ceil(width) + 20
+        );
+      }
+    };
 
     onMounted(() => {
       nextTick(() => {
-        if (mainTargetRef.value.$el && targetRef.value) {
-          const mainTargetWidth = mainTargetRef.value.$el.getBoundingClientRect()
-            .width;
-          const targetWidth = targetRef.value.getBoundingClientRect().width;
-          const height = rootNode.value?.getBoundingClientRect()
-            .height as number;
-          const width = compare(mainTargetWidth, targetWidth);
-          setWindowSize(
-            Number(index),
-            Math.ceil(height) + 20,
-            Math.ceil(width) + 20
+        if (targetRef.value) {
+          targetWidth.value = Math.ceil(
+            targetRef.value.getBoundingClientRect().width
           );
+          _setWindowSize();
         }
       });
     });
 
+    const mainTargetSvgWidth = ref<number>(500);
+    const onMountedMainTargetText = (width: number) => {
+      mainTargetSvgWidth.value = width + 50;
+      mainTargetWidth.value = mainTargetSvgWidth.value;
+      _setWindowSize();
+    };
+
     return {
       setting,
       rootNode,
-      mainTargetRef,
-      targetRef
+      targetRef,
+      onMountedMainTargetText,
+      mainTargetSvgWidth
     };
   }
 });
@@ -121,6 +145,10 @@ export default defineComponent({
   overflow: hidden;
   padding: 10px;
   text-align: right;
+
+  .main_target {
+    margin: 0 0 10px 0;
+  }
 
   .target_wrap {
     display: inline-flex;
