@@ -31,6 +31,9 @@ contextBridge.exposeInMainWorld("electronApi", {
   resizeWindow: (id: number, size: WindowSizeInterface): void => {
     ipcRenderer.send("Main:WindowManager:Resize", id, size);
   },
+  setAlwaysOnTop: (id: number, alwaysOnTop: boolean): void => {
+    ipcRenderer.send("Main:WindowManager:SetAlwaysOnTop", id, alwaysOnTop);
+  },
   logger: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     info: (arg: any): void => {

@@ -1,12 +1,21 @@
 import { app, BrowserWindow, Menu, Rectangle } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import { WindowNames } from "@/constants/window-name";
+import {
+  scrambleModeTargetSettingDefault,
+  TargetSettingInterface
+} from "@/constants/target";
+import { DisplayMode } from "@/constants/display-mode";
 import { scrambleWindowMinSize } from "@/constants/window-size";
 import Store from "electron-store";
 import path from "path";
 
 const store = new Store<Rectangle>({
   name: "setting"
+});
+
+const configStore = new Store<TargetSettingInterface>({
+  name: "config"
 });
 
 /**
@@ -20,6 +29,16 @@ export const createScrambleWindow = async (index: number | string = 0) => {
     width: scrambleWindowMinSize.width,
     height: scrambleWindowMinSize.height
   });
+
+  const settings: TargetSettingInterface = configStore.get(
+    `setting.${DisplayMode.SCRAMBLE}.${index}`,
+    scrambleModeTargetSettingDefault
+  );
+
+  let alwaysOnTop = false;
+  if (settings.others) {
+    alwaysOnTop = settings.others.onTop;
+  }
 
   // TODO 複数window対応
   const scrambleWindow = new BrowserWindow({
@@ -43,7 +62,8 @@ export const createScrambleWindow = async (index: number | string = 0) => {
     transparent: true,
     frame: false,
     resizable: false,
-    hasShadow: false
+    hasShadow: false,
+    alwaysOnTop: alwaysOnTop
   });
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {

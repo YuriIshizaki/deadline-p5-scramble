@@ -67,4 +67,14 @@ export const setupMainEvent = () => {
       }
     }
   );
+
+  ipcMain.on(
+    "Main:WindowManager:SetAlwaysOnTop",
+    (event: IpcMainEvent, id: number, alwaysOnTop: boolean) => {
+      const targetWindow = windowManager.getWindow(id);
+      if (targetWindow) {
+        targetWindow.setAlwaysOnTop(alwaysOnTop);
+      }
+    }
+  );
 };

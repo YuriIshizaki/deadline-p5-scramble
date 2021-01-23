@@ -11,6 +11,7 @@ export declare global {
       closeWindow(name: string): void;
       reloadWindow(name: string): void;
       resizeWindow(id: number, size: WindowSizeInterface): void;
+      setAlwaysOnTop(id: number, alwaysOnTop: boolean): void;
       logger: Logger;
     };
   }
