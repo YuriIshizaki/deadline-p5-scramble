@@ -24,6 +24,7 @@ import { defineComponent, ref, onMounted, nextTick } from "vue";
 import { useRoute } from "vue-router";
 import { DisplayMode } from "@/constants/display-mode";
 import { scrambleWindowMinSize } from "@/constants/window-size";
+import { scrambleModeTargetTextMaxlength } from "@/constants/target";
 import MainTarget from "@/components/scramble/MainTarget.vue";
 import Target from "@/components/scramble/Target.vue";
 
@@ -60,10 +61,19 @@ const getTargetSetting = (
     }
   );
   if (setting.mainTarget === "") {
-    setting.mainTarget = DefaultTargetSetting.mainTarget;
+    setting.mainTarget = DefaultTargetSetting.mainTarget.slice(
+      0,
+      scrambleModeTargetTextMaxlength.main
+    );
   }
 
-  setting.targets = setting.targets.filter((target: string) => target !== "");
+  const targetTemp: string[] = [];
+  setting.targets
+    .filter((target: string) => target !== "")
+    .forEach((target: string) => {
+      targetTemp.push(target.slice(0, scrambleModeTargetTextMaxlength.sub));
+    });
+  setting.targets = targetTemp;
   if (
     setting.targets.length === 0 ||
     (setting.targets.length > 0 && setting.targets[0] === "")

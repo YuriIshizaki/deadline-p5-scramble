@@ -6,6 +6,7 @@
         v-model="mainTarget"
         class="setting_input"
         placeholder="目標を達成しろ！"
+        :maxlength="targetMaxlength.main"
       >
         <template #prepend>主目標</template>
       </el-input>
@@ -14,6 +15,7 @@
         v-model="targets[index]"
         class="setting_input"
         placeholder="目標を設定しろ"
+        :maxlength="targetMaxlength.sub"
         :key="'target_' + index"
       >
         <template #prepend>目標{{ index + 1 }}</template>
@@ -27,6 +29,7 @@
 import { defineComponent, onMounted, ref } from "vue";
 import { DisplayMode } from "@/constants/display-mode";
 import { WindowNames } from "@/constants/window-name";
+import { scrambleModeTargetTextMaxlength } from "@/constants/target";
 
 export default defineComponent({
   name: "Preference",
@@ -43,8 +46,13 @@ export default defineComponent({
         targets: ["", "", ""]
       }
     );
-    const mainTarget = ref<string>(settings.mainTarget);
-    const targets = ref<string[]>(settings.targets);
+    const mainTarget = ref<string>(
+      settings.mainTarget.slice(0, scrambleModeTargetTextMaxlength.main)
+    );
+    const targets = ref<string[]>([]);
+    settings.targets.forEach((target: string) => {
+      targets.value.push(target.slice(0, scrambleModeTargetTextMaxlength.main));
+    });
 
     const onSaveButtonClick = () => {
       window.electronApi.addStore(`setting.${displayMode.value}.1`, {
@@ -60,11 +68,14 @@ export default defineComponent({
       document.body.className = "preference";
     });
 
+    const targetMaxlength = scrambleModeTargetTextMaxlength;
+
     return {
       displayMode,
       mainTarget,
       targets,
-      onSaveButtonClick
+      onSaveButtonClick,
+      targetMaxlength
     };
   }
 });
