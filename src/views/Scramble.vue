@@ -23,6 +23,12 @@
 import { defineComponent, ref, onMounted, nextTick } from "vue";
 import { useRoute } from "vue-router";
 import { DisplayMode } from "@/constants/display-mode";
+import { scrambleWindowMinSize } from "@/constants/window-size";
+import {
+  scrambleModeTargetTextMaxlength,
+  scrambleModeTargetSettingDefault,
+  TargetSettingInterface
+} from "@/constants/target";
 import MainTarget from "@/components/scramble/MainTarget.vue";
 import Target from "@/components/scramble/Target.vue";
 
@@ -42,27 +48,30 @@ const DefaultTargetSetting = {
   targets: ["目標を設定しろ"]
 } as const;
 
-interface TargetSettingInterface {
-  mainTarget: string;
-  targets: string[];
-}
-
 const getTargetSetting = (
   displayMode: string,
   index: string | number
 ): TargetSettingInterface => {
   const setting = window.electronApi.getStore(
     `setting.${displayMode}.${index}`,
-    {
-      mainTarget: "",
-      targets: [""]
-    }
+    scrambleModeTargetSettingDefault
   );
   if (setting.mainTarget === "") {
     setting.mainTarget = DefaultTargetSetting.mainTarget;
+  } else {
+    setting.mainTarget = setting.mainTarget.slice(
+      0,
+      scrambleModeTargetTextMaxlength.main
+    );
   }
 
-  setting.targets = setting.targets.filter((target: string) => target !== "");
+  const targetTemp: string[] = [];
+  setting.targets
+    .filter((target: string) => target !== "")
+    .forEach((target: string) => {
+      targetTemp.push(target.slice(0, scrambleModeTargetTextMaxlength.sub));
+    });
+  setting.targets = targetTemp;
   if (
     setting.targets.length === 0 ||
     (setting.targets.length > 0 && setting.targets[0] === "")
@@ -121,9 +130,12 @@ export default defineComponent({
       });
     });
 
-    const mainTargetSvgWidth = ref<number>(500);
+    const mainTargetSvgWidth = ref<number>(scrambleWindowMinSize.width);
     const onMountedMainTargetText = (width: number) => {
-      mainTargetSvgWidth.value = width + 50;
+      const temp = width + 50;
+      mainTargetSvgWidth.value =
+        temp < scrambleWindowMinSize.width ? scrambleWindowMinSize.width : temp;
+
       mainTargetWidth.value = mainTargetSvgWidth.value;
       _setWindowSize();
     };

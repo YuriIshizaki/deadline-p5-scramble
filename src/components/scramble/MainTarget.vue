@@ -24,6 +24,7 @@
 
 <script lang="ts">
 import { defineComponent, ref, computed, onMounted } from "vue";
+import { scrambleWindowMinSize } from "@/constants/window-size";
 
 export default defineComponent({
   name: "MainTarget",
@@ -31,7 +32,7 @@ export default defineComponent({
     target: String,
     width: {
       type: Number,
-      default: 500
+      default: scrambleWindowMinSize.width
     },
     height: {
       type: Number,
