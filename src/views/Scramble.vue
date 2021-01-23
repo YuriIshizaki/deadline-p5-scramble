@@ -24,7 +24,11 @@ import { defineComponent, ref, onMounted, nextTick } from "vue";
 import { useRoute } from "vue-router";
 import { DisplayMode } from "@/constants/display-mode";
 import { scrambleWindowMinSize } from "@/constants/window-size";
-import { scrambleModeTargetTextMaxlength } from "@/constants/target";
+import {
+  scrambleModeTargetTextMaxlength,
+  scrambleModeTargetSettingDefault,
+  TargetSettingInterface
+} from "@/constants/target";
 import MainTarget from "@/components/scramble/MainTarget.vue";
 import Target from "@/components/scramble/Target.vue";
 
@@ -44,24 +48,18 @@ const DefaultTargetSetting = {
   targets: ["目標を設定しろ"]
 } as const;
 
-interface TargetSettingInterface {
-  mainTarget: string;
-  targets: string[];
-}
-
 const getTargetSetting = (
   displayMode: string,
   index: string | number
 ): TargetSettingInterface => {
   const setting = window.electronApi.getStore(
     `setting.${displayMode}.${index}`,
-    {
-      mainTarget: "",
-      targets: [""]
-    }
+    scrambleModeTargetSettingDefault
   );
   if (setting.mainTarget === "") {
-    setting.mainTarget = DefaultTargetSetting.mainTarget.slice(
+    setting.mainTarget = DefaultTargetSetting.mainTarget;
+  } else {
+    setting.mainTarget = setting.mainTarget.slice(
       0,
       scrambleModeTargetTextMaxlength.main
     );
