@@ -23,6 +23,7 @@
 import { defineComponent, ref, onMounted, nextTick } from "vue";
 import { useRoute } from "vue-router";
 import { DisplayMode } from "@/constants/display-mode";
+import { scrambleWindowMinSize } from "@/constants/window-size";
 import MainTarget from "@/components/scramble/MainTarget.vue";
 import Target from "@/components/scramble/Target.vue";
 
@@ -121,9 +122,12 @@ export default defineComponent({
       });
     });
 
-    const mainTargetSvgWidth = ref<number>(500);
+    const mainTargetSvgWidth = ref<number>(scrambleWindowMinSize.width);
     const onMountedMainTargetText = (width: number) => {
-      mainTargetSvgWidth.value = width + 50;
+      const temp = width + 50;
+      mainTargetSvgWidth.value =
+        temp < scrambleWindowMinSize.width ? scrambleWindowMinSize.width : temp;
+
       mainTargetWidth.value = mainTargetSvgWidth.value;
       _setWindowSize();
     };

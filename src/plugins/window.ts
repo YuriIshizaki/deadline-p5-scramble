@@ -1,6 +1,7 @@
 import { app, BrowserWindow, Menu, Rectangle } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import { WindowNames } from "@/constants/window-name";
+import { scrambleWindowMinSize } from "@/constants/window-size";
 import Store from "electron-store";
 import path from "path";
 
@@ -16,16 +17,22 @@ export const createScrambleWindow = async (index: number | string = 0) => {
   const bounds: Rectangle = store.get("scrambleWindowBounds", {
     x: 0,
     y: 0,
-    width: 800,
-    height: 600
+    width: scrambleWindowMinSize.width,
+    height: scrambleWindowMinSize.height
   });
 
   // TODO 複数window対応
   const scrambleWindow = new BrowserWindow({
     x: bounds.x,
     y: bounds.y,
-    width: bounds.width,
-    height: bounds.height,
+    width:
+      bounds.width < scrambleWindowMinSize.width
+        ? scrambleWindowMinSize.width
+        : bounds.width,
+    height:
+      bounds.height < scrambleWindowMinSize.height
+        ? scrambleWindowMinSize.height
+        : bounds.height,
     useContentSize: false,
     webPreferences: {
       nodeIntegration: false,
